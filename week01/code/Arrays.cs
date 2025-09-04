@@ -36,7 +36,7 @@ public static class Arrays
         // then I'll make a copy of the original list to read elements without corrupting the order.
         // then I'll clear the original list using data.Clear().
         // Insert in the 'data' the last 'k' elements of the copy (keeping order).
-        // Then insert the first (n - k) elements of the copy.
+        // Then insert the first and the last (n - k) elements of the copy.
         // Exemple: data={1..9}, amount=3 -> k=3 -> add copy[6..8] (7,8,9) after copy[0..5] (1..6).
 
         if (data == null || data.Count == 0) return;
