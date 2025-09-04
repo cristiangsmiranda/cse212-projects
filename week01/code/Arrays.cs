@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 public static class Arrays
 {
     /// <summary>
@@ -8,12 +10,16 @@ public static class Arrays
     /// <returns>array of doubles that are the multiples of the supplied number</returns>
     public static double[] MultiplesOf(double number, int length)
     {
-        // TODO Problem 1 Start
-        // Remember: Using comments in your program, write down your process for solving this problem
-        // step by step before you write the code. The plan should be clear enough that it could
-        // be implemented by another person.
-
-        return []; // replace this return statement with your own
+        // first I'll create an array of doubles with the size length
+        // then I'll calculate i+1 for each index i from 0 to length-1:
+        // result[i] = number * (i + 1).
+        double[] result = new double[length];
+        for (int i = 0; i < length; i++)
+        {
+            result[i] = number * (i + 1);
+        }
+        // now it should return the already filled array
+        return result;
     }
 
     /// <summary>
@@ -25,9 +31,34 @@ public static class Arrays
     /// </summary>
     public static void RotateListRight(List<int> data, int amount)
     {
-        // TODO Problem 2 Start
-        // Remember: Using comments in your program, write down your process for solving this problem
-        // step by step before you write the code. The plan should be clear enough that it could
-        // be implemented by another person.
+
+        // first I will validate the trivial cases, i.e. if the list is empty, it will exit; if amount % n == 0, exit (no rotation).
+        // then I'll make a copy of the original list to read elements without corrupting the order.
+        // then I'll clear the original list using data.Clear().
+        // Insert in the 'data' the last 'k' elements of the copy (keeping order).
+        // Then insert the first (n - k) elements of the copy.
+        // Exemple: data={1..9}, amount=3 -> k=3 -> add copy[6..8] (7,8,9) after copy[0..5] (1..6).
+
+        if (data == null || data.Count == 0) return;
+
+        int n = data.Count;
+        int k = amount % n;
+        if (k == 0) return;
+
+        List<int> copy = new List<int>(data);
+        data.Clear();
+
+        for (int i = n - k; i < n; i++)
+        {
+            data.Add(copy[i]);
+        }
+
+        for (int i = 0; i < n - k; i++)
+        {
+            data.Add(copy[i]);
+        }
     }
 }
+
+
+   
