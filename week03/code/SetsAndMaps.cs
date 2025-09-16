@@ -22,7 +22,18 @@ public static class SetsAndMaps
     public static string[] FindPairs(string[] words)
     {
         // TODO Problem 1 - ADD YOUR CODE HERE
-        return [];
+        var set = new HashSet<string>(words);
+        var result = new List<string>();
+
+        foreach (var word in words)
+        {
+            string inverse = word[1].ToString() + word[0];
+            if (set.Contains(inverse) && string.Compare(word, inverse) < 0)
+            {
+                result.Add($"{word} & {inverse}");
+            }
+        }
+        return result.ToArray();
     }
 
     /// <summary>
@@ -43,8 +54,16 @@ public static class SetsAndMaps
         {
             var fields = line.Split(",");
             // TODO Problem 2 - ADD YOUR CODE HERE
+            var degree = fields[3];
+            if (degrees.ContainsKey(degree))
+            {
+                degrees[degree] = degrees[degree] + 1;
+            }
+            else
+            {
+                degrees[degree] = 1;
+            }
         }
-
         return degrees;
     }
 
@@ -67,7 +86,34 @@ public static class SetsAndMaps
     public static bool IsAnagram(string word1, string word2)
     {
         // TODO Problem 3 - ADD YOUR CODE HERE
-        return false;
+        word1 = word1.ToLower().Replace(" ", "");
+        word2 = word2.ToLower().Replace(" ", "");
+
+        Dictionary<char, int> counts = new Dictionary<char, int>();
+
+        foreach (char c in word1)
+        {
+            if (counts.ContainsKey(c))
+                counts[c]++;
+            else
+                counts[c] = 1;
+        }
+
+        foreach (char c in word2)
+        {
+            if (!counts.ContainsKey(c))
+            {
+                return false;
+            }
+
+            counts[c]--;
+
+            if (counts[c] == 0)
+            {
+                counts.Remove(c);
+            }
+        }
+        return counts.Count == 0;
     }
 
     /// <summary>
@@ -84,6 +130,24 @@ public static class SetsAndMaps
     /// https://earthquake.usgs.gov/earthquakes/feed/v1.0/geojson.php
     /// 
     /// </summary>
+
+
+    public class FeatureCollection
+    {
+        public List<Feature> Features { get; set; }
+    }
+
+    public class Feature
+    {
+        public Properties Properties { get; set; }
+    }
+
+    public class Properties
+    {
+        public double Mag { get; set; }
+        public string Place { get; set; }
+    }
+
     public static string[] EarthquakeDailySummary()
     {
         const string uri = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson";
@@ -96,11 +160,55 @@ public static class SetsAndMaps
 
         var featureCollection = JsonSerializer.Deserialize<FeatureCollection>(json, options);
 
-        // TODO Problem 5:
-        // 1. Add code in FeatureCollection.cs to describe the JSON using classes and properties 
-        // on those classes so that the call to Deserialize above works properly.
-        // 2. Add code below to create a string out each place a earthquake has happened today and its magitude.
-        // 3. Return an array of these string descriptions.
-        return [];
+
+        if (featureCollection?.Features == null)
+            return Array.Empty<string>();
+
+        var result = featureCollection.Features
+            .Select(f => $"{f.Properties.Place} - Mag {f.Properties.Mag}")
+            .ToArray();
+
+        return result;
+    }
+    public class Maze
+    {
+        private readonly Dictionary<(int, int), bool[]> _map;
+        private int _x;
+        private int _y;
+
+        public Maze(Dictionary<(int, int), bool[]> map)
+        {
+            _map = map;
+            _x = 1; // posição inicial
+            _y = 1;
+        }
+
+        public string GetStatus()
+        {
+            return $"Current location (x={_x}, y={_y})";
+        }
+
+        public void MoveLeft() => Move(0, -1, 0);   // left
+        public void MoveRight() => Move(1, 1, 0);   // right
+        public void MoveUp() => Move(2, 0, -1);     // up
+        public void MoveDown() => Move(3, 0, 1);    // down
+
+        private void Move(int directionIndex, int dx, int dy)
+        {
+            if (!_map.TryGetValue((_x, _y), out var walls))
+                throw new InvalidOperationException("Can't go that way!");
+
+            if (walls[directionIndex])
+                throw new InvalidOperationException("Can't go that way!");
+
+            int newX = _x + dx;
+            int newY = _y + dy;
+
+            if (!_map.ContainsKey((newX, newY)))
+                throw new InvalidOperationException("Can't go that way!");
+
+            _x = newX;
+            _y = newY;
+        }
     }
 }
