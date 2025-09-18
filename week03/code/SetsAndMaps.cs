@@ -170,45 +170,5 @@ public static class SetsAndMaps
 
         return result;
     }
-    public class Maze
-    {
-        private readonly Dictionary<(int, int), bool[]> _map;
-        private int _x;
-        private int _y;
-
-        public Maze(Dictionary<(int, int), bool[]> map)
-        {
-            _map = map;
-            _x = 1; // posição inicial
-            _y = 1;
-        }
-
-        public string GetStatus()
-        {
-            return $"Current location (x={_x}, y={_y})";
-        }
-
-        public void MoveLeft() => Move(0, -1, 0);   // left
-        public void MoveRight() => Move(1, 1, 0);   // right
-        public void MoveUp() => Move(2, 0, -1);     // up
-        public void MoveDown() => Move(3, 0, 1);    // down
-
-        private void Move(int directionIndex, int dx, int dy)
-        {
-            if (!_map.TryGetValue((_x, _y), out var walls))
-                throw new InvalidOperationException("Can't go that way!");
-
-            if (walls[directionIndex])
-                throw new InvalidOperationException("Can't go that way!");
-
-            int newX = _x + dx;
-            int newY = _y + dy;
-
-            if (!_map.ContainsKey((newX, newY)))
-                throw new InvalidOperationException("Can't go that way!");
-
-            _x = newX;
-            _y = newY;
-        }
-    }
 }
+

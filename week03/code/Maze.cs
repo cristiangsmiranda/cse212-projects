@@ -32,7 +32,7 @@ public class Maze
     /// </summary>
     public void MoveLeft()
     {
-        // FILL IN CODE
+        Move(0, -1, 0);
     }
 
     /// <summary>
@@ -41,7 +41,7 @@ public class Maze
     /// </summary>
     public void MoveRight()
     {
-        // FILL IN CODE
+        Move(1, 1, 0);
     }
 
     /// <summary>
@@ -50,7 +50,7 @@ public class Maze
     /// </summary>
     public void MoveUp()
     {
-        // FILL IN CODE
+        Move(2, 0, -1);
     }
 
     /// <summary>
@@ -59,11 +59,41 @@ public class Maze
     /// </summary>
     public void MoveDown()
     {
-        // FILL IN CODE
+        Move(3, 0, 1);
     }
 
     public string GetStatus()
     {
         return $"Current location (x={_currX}, y={_currY})";
+    }
+
+    private void Move(int directionIndex, int dx, int dy)
+    {
+        if (!_mazeMap.TryGetValue((_currX, _currY), out var walls))
+        {
+            Console.WriteLine($"[DEBUG] No map entry for current cell ({_currX},{_currY}).");
+            throw new InvalidOperationException("Can't go that way!");
+        }
+    
+        Console.WriteLine($"[DEBUG] At ({_currX},{_currY}) walls=[{string.Join(",", walls.Select(b => b ? "T" : "F"))}] trying dirIndex={directionIndex} (dx={dx},dy={dy})");
+
+        if (!walls[directionIndex])
+        {
+            Console.WriteLine($"[DEBUG] Blocked: walls[{directionIndex}] is false at ({_currX},{_currY}).");
+            throw new InvalidOperationException("Can't go that way!");
+        }
+
+        int newX = _currX + dx;
+        int newY = _currY + dy;
+
+        if (!_mazeMap.ContainsKey((newX, newY)))
+        {
+            Console.WriteLine($"[DEBUG] Destination ({newX},{newY}) does not exist in map.");
+            throw new InvalidOperationException("Can't go that way!");
+        }
+
+        Console.WriteLine($"[DEBUG] Moving ({_currX},{_currY}) -> ({newX},{newY}).");
+        _currX = newX;
+        _currY = newY;
     }
 }
